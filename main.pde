@@ -5,11 +5,11 @@ Game game;
 void setup() {
   game = new Game(3);  // you can pass an int here to set lives. default is 5
   size(960, 540);
-  background(0);
+  background(150);
 }
 
 void draw() {
-  background(0);
+  background(150);
   game.update();
   game.display(); 
 }

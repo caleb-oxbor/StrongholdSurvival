@@ -17,8 +17,14 @@ class GasPump {
     increaseRate = 8;
   }
   
-  void tick() {
+  int tick() {
+    // returns -1 if life lost, 0 otherwise
     fuelPercentage -= decreaseRate;
+    if (fuelPercentage <= 0) {
+      fuelPercentage = 66;
+      return -1;
+    }
+    return 0;
   }
   
   void handleMousePressed() {

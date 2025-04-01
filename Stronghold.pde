@@ -9,6 +9,13 @@ class Game {
   int roomID = 0; // 0 is main room, 1 is gas pump
   PImage heart = loadImage("heart1.png");
   
+  // room transition vars
+  int transitionAlpha = 0;
+  int transitionSpeed = 10;
+  boolean transitioning = false;
+  boolean fadingToBlack = true;
+  int transitionDest = 0;
+  
   // start menu vars
   int startButtonSize = 50;
   
@@ -48,8 +55,36 @@ class Game {
       playerX += playerSpeed;
   }
   
+  void roomTransition(int newRoom) {
+    fill(0, transitionAlpha);
+    rect(0, 85, width, height);
+    if (fadingToBlack) {
+      transitionAlpha += transitionSpeed;
+      if (transitionAlpha >= 255) {
+        transitionAlpha = 255;
+        roomID = newRoom;
+        fadingToBlack = false;
+      }
+    } else {
+      transitionAlpha -= transitionSpeed;
+      if (transitionAlpha <= 0) {
+        transitionAlpha = 0;
+        transitioning = false;
+        fadingToBlack = true;
+      }
+    }
+  }
+  
   void display() {
     if (started) {
+      
+    if (lives <= 0) {
+      // you lost :(
+      fill(0, 0, 255);
+      rect(-5, -5, width + 5, height + 5);
+      return;
+    }
+      
       fill(255);
       rectMode(CORNER);
       rect(-5, -5, width + 5, 90); // top bar overlay
@@ -62,7 +97,7 @@ class Game {
       }
       
       if (roomID == 0) {  // in main room
-        noStroke();
+        // noStroke();
         
         // player
         updatePlayerPos();
@@ -84,6 +119,10 @@ class Game {
       rect(width/2 - startButtonSize/2, height/2 - startButtonSize/2, startButtonSize, startButtonSize);
       rectMode(CORNER);
     }
+    
+      if (transitioning) {
+        roomTransition(transitionDest);
+      }
   }
   
   void handleMousePressed() {
@@ -106,7 +145,9 @@ class Game {
       if (roomID == 0) {
         
         if (key == 'j') { // FOR DEBUGGING, DELETE LATER
-          roomID = 1;
+          // roomID = 1;
+          transitioning = true;
+          transitionDest = 1;
         }
         
         // we are in the main room. move the player around
@@ -125,7 +166,8 @@ class Game {
         }
       } else if (roomID == 1) {
         if (key == 32) {// space bar to exit minigame
-          roomID = 0;
+          transitioning = true;
+          transitionDest = 0;
         }
       }
     }
@@ -157,7 +199,7 @@ class Game {
   // if a minigame's timer is going off, tick it and check for important info
     if (started) {
       if (millis() - minigame1_lastTime >= minigame1_interval) {
-        minigame1.tick();
+        lives += minigame1.tick();
         minigame1_lastTime = millis();
       }
     }
