@@ -10,7 +10,7 @@ class Game {
   PImage heart = loadImage("heart1.png");
   PImage settings = loadImage("gear.png");
   
-  // room transition vars
+  // transition vars
   int transitionAlpha = 0;
   int transitionSpeed = 10;
   boolean transitioning = false;
@@ -48,6 +48,9 @@ class Game {
   boolean playerMovingDown = false;
   boolean playerMovingLeft = false;
   boolean playerMovingRight = false;
+  
+  int minigame1X = 200;
+  int minigame1Y = 300;
   
   Game() {
     minigame1 = new GasPump();
@@ -188,11 +191,24 @@ class Game {
       if (roomID == 0) {  // in main room
         // noStroke();
         
+        // minigame1
+        if (playerX >= minigame1X && playerX + 20 <= minigame1X + 50 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 50) {
+          // we are on the minigame1 door
+          strokeWeight(2);
+          stroke(255);
+        }
+        fill(minigame1.getColor());
+        rectMode(CORNER);
+        rect(minigame1X, minigame1Y, 50, 50);
+        strokeWeight(1);
+        stroke(0);
+        
         // player
         updatePlayerPos();
-        fill(255, 0, 0);
+        fill(0, 0, 255);
         rectMode(CORNER);
         rect(playerX, playerY, 20, 20);
+        
       } else if (roomID == 1) {
         minigame1.display();
       }
@@ -396,9 +412,12 @@ class Game {
       }
       
       if (roomID == 0) {
-        if (key == 'j') { // FOR DEBUGGING, DELETE LATER
-          transitioning = true;
-          transitionDest = 1;
+        if (key == 'e' || key == 'E') {
+          // trying to transition to room, check which one
+          if (playerX >= minigame1X && playerX + 20 <= minigame1X + 50 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 50) {
+            transitioning = true;
+            transitionDest = 1;
+          }
         }
         
         if (key == 'p' || key == 'P') { // Pause or settings
