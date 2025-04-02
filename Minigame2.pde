@@ -15,6 +15,11 @@ class ZombieDefense {
     ammo = 10000;
     firedBullets = new Bullet[ammo];
   }
+  
+  void stopPlayer() {
+    playerMovingUp = false;
+    playerMovingDown = false;
+  }
 
   void updatePlayerPos() {
     if(playerMovingUp && yPos > 165) {

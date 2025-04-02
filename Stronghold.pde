@@ -18,13 +18,14 @@ class Game {
   int transitionDest = 0;
   
   // game state for menu navigation
-  int gameState = 0; // 0=main menu, 1=game, 2=settings 
+  int gameState = 0; // 0=main menu, 1=game, 2=settings, 3=win/loss screen
   String difficulty = "medium"; // "easy", "medium", "hard"
   
   // timer variables
   int gameTimeTotal; // total time to survive in milliseconds
   int gameStartTime; // when the game started
   int timeLeft; // time left in milliseconds
+  int quoteTimer; // for spacing out voicelines
   
   // start menu vars
   int startButtonSize = 50;
@@ -40,6 +41,14 @@ class Game {
   int minigame1_interval = 500; // 500 ms
   int minigame1_lastTime = 0;
   
+  // SFX
+  PApplet parent;
+  
+  SoundFile winSound;
+  SoundFile loseSound;
+  boolean endQuotePlayed = false;
+  
+  SoundFile[] hurtSound;
   
   // main room vars
   int playerX = width/4;
@@ -55,18 +64,33 @@ class Game {
   int minigame2X = width - 200;
   int minigame2Y = 300;
   
-  Game() {
+  Game(PApplet p) {
+    parent = p;
     minigame1 = new GasPump();
     minigame2 = new ZombieDefense();
     lives = 5;
     setupDifficulty("medium");
+    
+    winSound = new SoundFile(parent, "Win.mp3");
+    loseSound = new SoundFile(parent, "Lose.mp3");
+    hurtSound = new SoundFile[3];
+    hurtSound[0] = new SoundFile(parent, "Hurt1.mp3");
+    hurtSound[1] = new SoundFile(parent, "Hurt2.mp3");
+    hurtSound[2] = new SoundFile(parent, "Hurt3.mp3");
   }
   
-  Game(int livesArg) {
+  Game(PApplet p, int livesArg) {
+    parent = p;
     minigame1 = new GasPump();
     minigame2 = new ZombieDefense();
     lives = livesArg;
     setupDifficulty("medium");
+    winSound = new SoundFile(parent, "Win.mp3");
+    loseSound = new SoundFile(parent, "Lose.mp3");
+    hurtSound = new SoundFile[3];
+    hurtSound[0] = new SoundFile(parent, "Hurt1.mp3");
+    hurtSound[1] = new SoundFile(parent, "Hurt2.mp3");
+    hurtSound[2] = new SoundFile(parent, "Hurt3.mp3");
   }
   
   void setupDifficulty(String diff) {
@@ -104,6 +128,13 @@ class Game {
       playerX += playerSpeed;
   }
   
+  void stopPlayer() {
+    playerMovingUp = false;
+    playerMovingDown = false;
+    playerMovingLeft = false;
+    playerMovingRight = false;
+  }
+  
   void roomTransition(int newRoom) {
     fill(0, transitionAlpha);
     rect(0, 85, width, height);
@@ -131,6 +162,13 @@ class Game {
       
       if (timeLeft <= 0 && lives > 0) {
         // You win! Game completed successfully
+        if (!winSound.isPlaying() && !endQuotePlayed) {
+          winSound.play();
+          endQuotePlayed = true;
+        }
+        
+        gameState = 3;
+        
         fill(0, 150, 0);
         rect(-5, -5, width + 5, height + 5);
         
@@ -147,7 +185,12 @@ class Game {
       }
       
       if (lives <= 0) {
-        // you lost :(
+        if (!loseSound.isPlaying() && !endQuotePlayed) {
+          loseSound.play();
+          endQuotePlayed = true;
+        }
+        
+        gameState = 3;
         fill(0, 0, 255);
         rect(-5, -5, width + 5, height + 5);
         
@@ -382,6 +425,7 @@ class Game {
         if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
           setupDifficulty("easy");
           started = true;
+          gameState = 1;
           gameStartTime = millis();
         }
         
@@ -390,6 +434,7 @@ class Game {
         if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
           setupDifficulty("medium");
           started = true;
+          gameState = 1;
           gameStartTime = millis();
         }
         
@@ -398,6 +443,7 @@ class Game {
         if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
           setupDifficulty("hard");
           started = true;
+          gameState = 1;
           gameStartTime = millis();
         }
         
@@ -426,7 +472,7 @@ class Game {
   
   void handleKeyPressed(char key, int keyCode) {
     if (started) {
-      if (lives <= 0 && (key == 'r' || key == 'R')) {
+      if (gameState == 3 && (key == 'r' || key == 'R')) {
         // Reset game and return to menu
         resetGame();
         return;
@@ -438,10 +484,13 @@ class Game {
           if (playerX >= minigame1X && playerX + 20 <= minigame1X + 50 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 50) {
             transitioning = true;
             transitionDest = 1;
+            stopPlayer();
           }
           else if (playerX >= minigame2X && playerX + 20 <= minigame2X + 50 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 50){
+            stopPlayer();
             transitioning = true;
             transitionDest = 2;
+            stopPlayer();
           }
         }
         
@@ -465,10 +514,11 @@ class Game {
         if ((key == 'd' || key == 'D' || keyCode == RIGHT) && playerX <= width) {
           playerMovingRight = true;
         }
-      } else if (roomID == 1|| roomID == 2) {
+      } else {
         if (key == 32) {// space bar to exit minigame
           transitioning = true;
           transitionDest = 0;
+          minigame2.stopPlayer();
         }
         if (roomID == 2) {
           minigame2.handleKeyPressed(key, keyCode);
@@ -500,6 +550,9 @@ class Game {
     playerMovingDown = false;
     playerMovingLeft = false;
     playerMovingRight = false;
+    
+    // sfx reset
+    endQuotePlayed = false;
   }
   
   void handleKeyReleased(char key, int keyCode) {
@@ -529,9 +582,14 @@ class Game {
   void update() {
   // if started, update all minigames based on their own timers
   // if a minigame's timer is going off, tick it and check for important info
-    if (started) {
+    if (started && gameState == 1) {
       if (millis() - minigame1_lastTime >= minigame1_interval) {
-        lives += minigame1.tick();
+        if (minigame1.tick() == -1) {
+          lives--;
+          if (lives > 0) {
+            hurtSound[(int)random(3)].play();
+          }
+        }
         minigame1_lastTime = millis();
       }
     }

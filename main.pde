@@ -3,9 +3,9 @@
 Game game;
 
 void setup() {
-  game = new Game(3);  // you can pass an int here to set lives. default is 5
+  game = new Game(this, 3);  // you can pass an int here to set lives. default is 5
   size(960, 540);
-  background(150);
+  background(30, 60, 90);
 }
 
 void draw() {
