@@ -6,7 +6,7 @@ class Game {
   int lives = 3;
   int score = 0;
   boolean started = false;
-  int roomID = 0; // 0 is main room, 1 is gas pump
+  int roomID = 0; // 0 is main room, 1 is gas pump, 2 is zombie defend
   PImage heart = loadImage("heart1.png");
   PImage settings = loadImage("gear.png");
   
@@ -36,6 +36,7 @@ class Game {
   
   // minigames and their timers
   GasPump minigame1;
+  ZombieDefense minigame2;
   int minigame1_interval = 500; // 500 ms
   int minigame1_lastTime = 0;
   
@@ -51,15 +52,19 @@ class Game {
   
   int minigame1X = 200;
   int minigame1Y = 300;
+  int minigame2X = width - 200;
+  int minigame2Y = 300;
   
   Game() {
     minigame1 = new GasPump();
+    minigame2 = new ZombieDefense();
     lives = 5;
     setupDifficulty("medium");
   }
   
   Game(int livesArg) {
     minigame1 = new GasPump();
+    minigame2 = new ZombieDefense();
     lives = livesArg;
     setupDifficulty("medium");
   }
@@ -203,6 +208,17 @@ class Game {
         strokeWeight(1);
         stroke(0);
         
+        if (playerX >= minigame2X && playerX + 20 <= minigame2X + 50 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 50) {
+          // we are on the minigame1 door
+          strokeWeight(2);
+          stroke(255);
+        }
+        fill(minigame2.getColor());
+        rectMode(CORNER);
+        rect(minigame2X, minigame2Y, 50, 50);
+        strokeWeight(1);
+        stroke(0);
+        
         // player
         updatePlayerPos();
         fill(0, 0, 255);
@@ -212,12 +228,16 @@ class Game {
       } else if (roomID == 1) {
         minigame1.display();
       }
-    } else {  // Not started, display menus
-      if (gameState == 0) {
-        mainMenu();
-      } else if (gameState == 2) {
-        settingsMenu();
+      else if (roomID == 2){
+        minigame2.display();
       }
+    } 
+      else {  // Not started, display menus
+        if (gameState == 0) {
+          mainMenu();
+        } else if (gameState == 2) {
+          settingsMenu();
+        }
     }
     
     if (transitioning) {
@@ -352,7 +372,8 @@ class Game {
       if (roomID == 1) {
         minigame1.handleMousePressed();
       }
-    } else {
+    } 
+    else {
       // Handle menu interactions
       if (gameState == 0) { // Main menu
         int buttonY = height/2 - 100;
@@ -418,6 +439,10 @@ class Game {
             transitioning = true;
             transitionDest = 1;
           }
+          else if (playerX >= minigame2X && playerX + 20 <= minigame2X + 50 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 50){
+            transitioning = true;
+            transitionDest = 2;
+          }
         }
         
         if (key == 'p' || key == 'P') { // Pause or settings
@@ -440,10 +465,13 @@ class Game {
         if ((key == 'd' || key == 'D' || keyCode == RIGHT) && playerX <= width) {
           playerMovingRight = true;
         }
-      } else if (roomID == 1) {
+      } else if (roomID == 1|| roomID == 2) {
         if (key == 32) {// space bar to exit minigame
           transitioning = true;
           transitionDest = 0;
+        }
+        if (roomID == 2) {
+          minigame2.handleKeyPressed(key, keyCode);
         }
       }
     } else {
@@ -464,6 +492,7 @@ class Game {
     playerX = width/4;
     playerY = height/2;
     minigame1 = new GasPump();
+    minigame2 = new ZombieDefense();
     setupDifficulty(difficulty);
     
     // Reset player movement
@@ -490,6 +519,9 @@ class Game {
         if ((key == 'd' || key == 'D' || keyCode == RIGHT)) {
           playerMovingRight = false;
         }
+      }
+      else if (roomID == 2) {
+        minigame2.handleKeyReleased(key, keyCode);
       }
     }
   }
