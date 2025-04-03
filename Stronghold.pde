@@ -392,19 +392,49 @@ class Game {
     text("Exit Minigame: SPACE", width/2 - 250, height/2 + 70);
     text("Interact: MOUSE", width/2 - 250, height/2 + 100);
     
-    // Back button
+    // Buttons at bottom - horizontal layout
     textAlign(CENTER, CENTER);
     rectMode(CORNER);
+    
     int buttonY = height - 100;
-    if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
-      fill(100, 100, 200);
+    int smallButtonWidth = 180;
+    int buttonSpacing = 20;
+    
+    // If we came from the game, show a "Resume Game" button and Main Menu side by side
+    if (timeLeft > 0) {
+      // Resume Game button (left)
+      if (isMouseOverRect(width/2 - smallButtonWidth - buttonSpacing/2, buttonY, smallButtonWidth, menuButtonHeight)) {
+        fill(100, 200, 100);
+      } else {
+        fill(60, 160, 60);
+      }
+      rect(width/2 - smallButtonWidth - buttonSpacing/2, buttonY, smallButtonWidth, menuButtonHeight, 10);
+      fill(255);
+      textSize(24);
+      text("Resume Game", width/2 - smallButtonWidth/2 - buttonSpacing/2, buttonY + menuButtonHeight/2);
+      
+      // Main Menu button (right)
+      if (isMouseOverRect(width/2 + buttonSpacing/2, buttonY, smallButtonWidth, menuButtonHeight)) {
+        fill(100, 100, 200);
+      } else {
+        fill(60, 60, 160);
+      }
+      rect(width/2 + buttonSpacing/2, buttonY, smallButtonWidth, menuButtonHeight, 10);
+      fill(255);
+      textSize(24);
+      text("Main Menu", width/2 + smallButtonWidth/2 + buttonSpacing/2, buttonY + menuButtonHeight/2);
     } else {
-      fill(60, 60, 160);
+      // Just show one centered "Back to Menu" button if not in game
+      if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
+        fill(100, 100, 200);
+      } else {
+        fill(60, 60, 160);
+      }
+      rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
+      fill(255);
+      textSize(24);
+      text("Back to Menu", width/2, buttonY + menuButtonHeight/2);
     }
-    rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
-    fill(255);
-    textSize(24);
-    text("Back to Menu", width/2, buttonY + menuButtonHeight/2);
   }
   
   boolean isMouseOverRect(float x, float y, float w, float h) {
@@ -463,10 +493,28 @@ class Game {
           soundVolume = constrain((mouseX - (width/2 - 150)) / 300.0, 0, 1);
         }
         
-        // Back button
         int buttonY = height - 100;
-        if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
-          gameState = 0; // Return to main menu
+        int smallButtonWidth = 180;
+        int buttonSpacing = 20;
+        
+        // Check for button clicks based on layout
+        if (timeLeft > 0) {
+          // Resume Game button (left)
+          if (isMouseOverRect(width/2 - smallButtonWidth - buttonSpacing/2, buttonY, smallButtonWidth, menuButtonHeight)) {
+            gameState = 1; // Return to game
+            started = true; // Resume the game
+            return;
+          }
+          
+          // Main Menu button (right)
+          if (isMouseOverRect(width/2 + buttonSpacing/2, buttonY, smallButtonWidth, menuButtonHeight)) {
+            gameState = 0; // Return to main menu
+          }
+        } else {
+          // Single "Back to Menu" button
+          if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
+            gameState = 0; // Return to main menu
+          }
         }
       }
     }
@@ -530,7 +578,14 @@ class Game {
       // In menu
       if (key == 27) { // ESC key
         if (gameState == 2) { // In settings
-          gameState = 0; // Return to main menu
+          if (timeLeft > 0) {
+            // If we came from the game, return to it
+            gameState = 1; 
+            started = true;
+          } else {
+            // Otherwise return to main menu
+            gameState = 0;
+          }
         }
       }
     }
