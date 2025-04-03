@@ -4,19 +4,28 @@ class ZombieDefense {
   float yPos;
   boolean playerMovingUp = false;
   boolean playerMovingDown = false;
+  
   boolean fire;
   boolean fired;
   int ammo;
   Bullet[] firedBullets;
+  
+  int numZombies;
+  int maxZombies;
+  Zombie[] zombies;
+  boolean dead = false;
   
   ZombieDefense() {
     yPos = height/2 + 85;
     fired = false;
     ammo = 10000;
     firedBullets = new Bullet[ammo];
+    numZombies = 0;
+    maxZombies = 3;
+    zombies = new Zombie[maxZombies];
   }
-  
-  void stopPlayer() {
+
+  voidStopPlayer() {
     playerMovingUp = false;
     playerMovingDown = false;
   }
@@ -31,6 +40,34 @@ class ZombieDefense {
   }
   
   int tick() {
+    for(int i = 0; i < numZombies; i++) {
+      zombies[i].moveZombie();
+      if(zombies[i].xPos <= 100) {
+        dead = true;
+      }
+      if(dead) {
+        if(i + 1 != numZombies) {
+          zombies[i] = zombies[i+1];
+        }
+        else if(i == numZombies - 1){
+          zombies[i] = null;
+          dead = false;
+          numZombies--;
+          return -1;
+        }
+      }
+    }
+    dead = false;
+    
+    if(numZombies != maxZombies) {
+      int chance = int(random(1, 5));
+      if(chance == 1) {
+        float ZombieYPos = random(85, height - 50);
+        Zombie zombie = new Zombie(float(width-30), ZombieYPos);
+        zombies[numZombies] = zombie;
+        numZombies++;
+      }
+    }
     return 0;
   }
   
@@ -78,6 +115,13 @@ class ZombieDefense {
     stroke(0);
     fill(0, 0, 255);
     rect(10, yPos - 70, 70, 70);
+    for(int i = 0; i < numZombies; i++) {
+      fill(#487042);
+      float xPos = zombies[i].xPos;
+      float yZombie = zombies[i].yPos;
+      rect(xPos, yZombie, 30, 30);
+    }
+    
     for(int i = 0; i < 10000 - ammo; i++) {
       fill(35);
       float xPos = firedBullets[i].xPos;
@@ -107,6 +151,9 @@ class ZombieDefense {
   
 }
 
+
+
+
 class Bullet {
   float xPos;
   float yPos;
@@ -120,5 +167,21 @@ class Bullet {
   
   void moveBullet() {
     xPos += vx;
+  }
+}
+
+class Zombie {
+  float xPos;
+  float yPos;
+  float vx;
+  
+  Zombie(float x, float y) {
+    xPos = x;
+    yPos = y;
+    vx = 20;
+  }
+  
+  void moveZombie() {
+    xPos -= vx;
   }
 }
