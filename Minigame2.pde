@@ -25,7 +25,7 @@ class ZombieDefense {
     zombies = new Zombie[maxZombies];
   }
 
-  voidStopPlayer() {
+  void stopPlayer() {
     playerMovingUp = false;
     playerMovingDown = false;
   }
