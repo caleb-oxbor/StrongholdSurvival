@@ -14,6 +14,9 @@ class ZombieDefense {
   int maxZombies;
   Zombie[] zombies;
   boolean dead = false;
+  int numBreached;
+  
+  color c;
   
   ZombieDefense() {
     yPos = height/2 + 85;
@@ -21,8 +24,10 @@ class ZombieDefense {
     ammo = 10000;
     firedBullets = new Bullet[ammo];
     numZombies = 0;
-    maxZombies = 3;
+    maxZombies = 10;
     zombies = new Zombie[maxZombies];
+    numBreached = 0;
+    c = color(0, 255, 0);
   }
 
   void stopPlayer() {
@@ -44,6 +49,16 @@ class ZombieDefense {
       zombies[i].moveZombie();
       if(zombies[i].xPos <= 100) {
         dead = true;
+        numBreached++;
+      }
+      if(zombies[i].xPos <= 575 && (c == color(0, 255, 0))) {
+        c = color(255, 255, 0);
+      }
+      else if(zombies[i].xPos <= 300 && (c == color(255, 255, 0) || c == color(0, 255, 0))) {
+        c = color(255, 0, 0);
+      }
+      else if(c == color(0, 255, 0)){
+        c = color(0, 255, 0);
       }
       if(dead) {
         if(i + 1 != numZombies) {
@@ -53,22 +68,58 @@ class ZombieDefense {
           zombies[i] = null;
           dead = false;
           numZombies--;
-          return -1;
+          if(numBreached == 5) {
+            numBreached = 0;
+            return -1;
+          }
         }
       }
     }
     dead = false;
     
     if(numZombies != maxZombies) {
-      int chance = int(random(1, 5));
+      int chance = int(random(1, 20));
       if(chance == 1) {
-        float ZombieYPos = random(85, height - 50);
-        Zombie zombie = new Zombie(float(width-30), ZombieYPos);
+        float ZombieYPos = random(125, height - 50);
+        int rand = int(random(1, 51));
+        boolean gold = false;
+        if(rand == 1) {
+          gold = true;
+        }
+        Zombie zombie = new Zombie(float(width-30), ZombieYPos, gold);
         zombies[numZombies] = zombie;
         numZombies++;
       }
     }
     return 0;
+  }
+  
+  void tick2() {
+    for(int i = 0; i < 10000 - ammo; i++) {
+       firedBullets[i].moveBullet();
+       for(int j = 0; j < numZombies; j++) {
+         //Collision logic
+         if(firedBullets[i].xPos + 15 >= zombies[j].xPos && firedBullets[i].yPos - 30 <= zombies[j].yPos
+         && firedBullets[i].yPos + 30 >= zombies[j].yPos + 30 && firedBullets[i].xPos < width) {
+           firedBullets[i].xPos = width * 2;
+           dead = true;
+           if(zombies[j].golden) {
+             coins++;
+           }
+         }
+         if(dead) {
+           if(j + 1 != numZombies) {
+             zombies[j] = zombies[j+1];
+              }
+            else if(j == numZombies - 1){
+              zombies[j] = null;
+              dead = false;
+              numZombies--;
+            }
+         }
+       }
+    }
+    return;
   }
   
   void handleKeyPressed(char key, int keyCode) {
@@ -117,6 +168,9 @@ class ZombieDefense {
     rect(10, yPos - 70, 70, 70);
     for(int i = 0; i < numZombies; i++) {
       fill(#487042);
+      if(zombies[i].golden) {
+        fill(#f2d45c);
+      }
       float xPos = zombies[i].xPos;
       float yZombie = zombies[i].yPos;
       rect(xPos, yZombie, 30, 30);
@@ -140,9 +194,7 @@ class ZombieDefense {
   }
   
   color getColor() {
-      return color(0, 255, 0);
-      //return color(255, 255, 0);
-      //return color(255, 0, 0);
+      return c;
   }
   
   float getYPos() {
@@ -174,11 +226,13 @@ class Zombie {
   float xPos;
   float yPos;
   float vx;
+  boolean golden;
   
-  Zombie(float x, float y) {
+  Zombie(float x, float y, boolean state) {
     xPos = x;
     yPos = y;
-    vx = 20;
+    vx = 2;
+    golden = state;
   }
   
   void moveZombie() {
