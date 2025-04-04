@@ -39,9 +39,11 @@ class Game {
   GasPump minigame1;
   ZombieDefense minigame2;
   int minigame1_interval = 500; // 500 ms
-  int minigame2_interval = 500;
+  int minigame2_interval_1 = 45; // Zombie
+  int minigame2_interval_2 = 1; // Bullet
   int minigame1_lastTime = 0;
-  int minigame2_lastTime = 0;
+  int minigame2_lastTime_1 = 0;
+  int minigame2_lastTime_2 = 0;
   
   // SFX
   PApplet parent;
@@ -636,25 +638,33 @@ class Game {
     }
   }
   
-  void update() {
+    void update() {
   // if started, update all minigames based on their own timers
   // if a minigame's timer is going off, tick it and check for important info
     if (started && gameState == 1) {
       if (millis() - minigame1_lastTime >= minigame1_interval) {
-        if (minigame1.tick() == -1 || minigame2.tick() == -1) {
-          lives--;
-          if (lives > 0) {
-            hurtSound[(int)random(3)].play();
-          }
-        }
-        if (minigame2.tick() == -1) {
+        if (minigame1.tick() == -1) {
           lives--;
           if (lives > 0) {
             hurtSound[(int)random(3)].play();
           }
         }
         minigame1_lastTime = millis();
-        minigame2_lastTime = millis();
+      }
+      // Zombie
+      if (millis() - minigame2_lastTime_1 >= minigame2_interval_1) {
+        if (minigame2.tick() == -1) {
+          lives--;
+          if (lives > 0) {
+            hurtSound[(int)random(3)].play();
+          }
+        }
+        minigame2_lastTime_1 = millis();
+      }
+      //Bullet
+      if (millis() - minigame2_lastTime_2 >= minigame2_interval_2) {
+        minigame2.tick2();
+        minigame2_lastTime_2 = millis();
       }
     }
   }
