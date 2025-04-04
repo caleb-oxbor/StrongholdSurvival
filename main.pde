@@ -1,6 +1,7 @@
 // this is what u run to play the game
 
 Game game;
+int coins;
 
 void setup() {
   game = new Game(this, 3);  // you can pass an int here to set lives. default is 5
