@@ -638,7 +638,7 @@ class Game {
     }
   }
   
-    void update() {
+  void update() {
   // if started, update all minigames based on their own timers
   // if a minigame's timer is going off, tick it and check for important info
     if (started && gameState == 1) {
