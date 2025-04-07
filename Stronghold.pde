@@ -5,6 +5,7 @@ class Game {
   // general game logic vars
   int lives = 3;
   int score = 0;
+  int coins = 0;
   boolean started = false;
   int roomID = 0; // 0 is main room, 1 is gas pump, 2 is zombie defend
   PImage heart = loadImage("heart1.png");
@@ -220,6 +221,13 @@ class Game {
         image(heart, heartCorner, -5, 100, 100);
         heartCorner += 85;
       }
+      
+      // coins
+      fill(200, 200, 0);
+      rect(width/2 - 10, 30, 20, 20);
+      textAlign(RIGHT, CENTER);
+      textSize(40);
+      text(coins, width/2 + 50, 40);
       
       // Display timer
       fill(0);
@@ -443,6 +451,10 @@ class Game {
     return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
   }
   
+  void updateCoins() {
+    coins += minigame2.getCoins();
+  }
+  
   void handleMousePressed() {
     if (started) {
       // check roomID and do stuff based on what room user is in
@@ -598,6 +610,7 @@ class Game {
     gameState = 0;
     lives = 3;
     roomID = 0;
+    coins = 0;
     playerX = width/4;
     playerY = height/2;
     minigame1 = new GasPump();
@@ -666,6 +679,10 @@ class Game {
         minigame2.tick2();
         minigame2_lastTime_2 = millis();
       }
+      
+      // coins
+      updateCoins();
+      
     }
   }
   

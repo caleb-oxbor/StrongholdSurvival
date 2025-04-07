@@ -4,6 +4,7 @@ class ZombieDefense {
   float yPos;
   boolean playerMovingUp = false;
   boolean playerMovingDown = false;
+  int minigameCoins = 0;
   
   boolean fire;
   boolean fired;
@@ -57,7 +58,7 @@ class ZombieDefense {
       else if(zombies[i].xPos <= 300 && (c == color(255, 255, 0) || c == color(0, 255, 0))) {
         c = color(255, 0, 0);
       }
-      else if(c == color(0, 255, 0)){
+      else if (c == color(0, 255, 0)) {
         c = color(0, 255, 0);
       }
       if(dead) {
@@ -104,7 +105,7 @@ class ZombieDefense {
            firedBullets[i].xPos = width * 2;
            dead = true;
            if(zombies[j].golden) {
-             coins++;
+             minigameCoins++;
            }
          }
          if(dead) {
@@ -148,6 +149,12 @@ class ZombieDefense {
     if(key == 's' || key == 'S' || keyCode == DOWN) {
       playerMovingDown = false;
     }
+  }
+  
+  int getCoins() {
+    int temp = minigameCoins;
+    minigameCoins = 0;
+    return temp;
   }
   
   void display() {
