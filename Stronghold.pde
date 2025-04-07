@@ -48,10 +48,13 @@ class Game {
   
   // SFX
   PApplet parent;
-  
   SoundFile winSound;
   SoundFile loseSound;
+  SoundFile helpAlmostHereSound;
+  SoundFile gasLowSound;
+  SoundFile zombieDoorstepSound;
   boolean endQuotePlayed = false;
+  boolean helpAlmostHerePlayed = false;
   
   SoundFile[] hurtSound;
   
@@ -82,6 +85,9 @@ class Game {
     hurtSound[0] = new SoundFile(parent, "Hurt1.mp3");
     hurtSound[1] = new SoundFile(parent, "Hurt2.mp3");
     hurtSound[2] = new SoundFile(parent, "Hurt3.mp3");
+    helpAlmostHereSound = new SoundFile(parent, "HelpAlmostHere.mp3");
+    gasLowSound = new SoundFile(parent, "gasLow.mp3");
+    zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
   }
   
   Game(PApplet p, int livesArg) {
@@ -96,6 +102,9 @@ class Game {
     hurtSound[0] = new SoundFile(parent, "Hurt1.mp3");
     hurtSound[1] = new SoundFile(parent, "Hurt2.mp3");
     hurtSound[2] = new SoundFile(parent, "Hurt3.mp3");
+    helpAlmostHereSound = new SoundFile(parent, "HelpAlmostHere.mp3");
+    gasLowSound = new SoundFile(parent, "GasLow.mp3");
+    zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
   }
   
   void setupDifficulty(String diff) {
@@ -244,6 +253,10 @@ class Game {
       // Change color when time is running low (less than 30 seconds)
       if (secondsLeft < 30) {
         fill(255, 0, 0);
+        if (!helpAlmostHerePlayed) {
+          helpAlmostHereSound.play();
+          helpAlmostHerePlayed = true;
+        }
       }
       
       text(timeString, width - 20, 45);
@@ -625,6 +638,7 @@ class Game {
     
     // sfx reset
     endQuotePlayed = false;
+    helpAlmostHerePlayed = false;
   }
   
   void handleKeyReleased(char key, int keyCode) {
@@ -662,6 +676,12 @@ class Game {
             hurtSound[(int)random(3)].play();
           }
         }
+        if (minigame1.quotePrimed) {
+          minigame1.quotePrimed = false;
+          if (roomID != 1) {
+            gasLowSound.play();
+          }
+        }
         minigame1_lastTime = millis();
       }
       // Zombie
@@ -670,6 +690,12 @@ class Game {
           lives--;
           if (lives > 0) {
             hurtSound[(int)random(3)].play();
+          }
+        }
+        if (minigame2.quotePrimed) {
+          minigame2.quotePrimed = false;
+          if (roomID != 2) {
+            zombieDoorstepSound.play();
           }
         }
         minigame2_lastTime_1 = millis();

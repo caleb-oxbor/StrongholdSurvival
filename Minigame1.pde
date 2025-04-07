@@ -4,24 +4,33 @@ class GasPump {
   float fuelPercentage;
   float decreaseRate;
   int   increaseRate;
+  boolean quotePrimed;
   
   GasPump() {
     fuelPercentage = 100;
     decreaseRate = -0.5;
     increaseRate = 8;
+    quotePrimed = false;
   }
   
   GasPump(float startingPercentage) {
     fuelPercentage = startingPercentage;
     decreaseRate = -0.5;
     increaseRate = 8;
+    quotePrimed = false;
   }
   
   int tick() {
     // returns -1 if life lost, 0 otherwise
+    boolean startedHigh = (fuelPercentage >= 33);
+    
     fuelPercentage -= decreaseRate;
+    if (startedHigh && fuelPercentage < 33) {
+      quotePrimed = true;
+    }
+    
     if (fuelPercentage <= 0) {
-      fuelPercentage = 66;
+      fuelPercentage = 65;
       return -1;
     }
     return 0;

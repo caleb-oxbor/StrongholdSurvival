@@ -5,6 +5,7 @@ class ZombieDefense {
   boolean playerMovingUp = false;
   boolean playerMovingDown = false;
   int minigameCoins = 0;
+  boolean quotePrimed;
   
   boolean fire;
   boolean fired;
@@ -29,6 +30,7 @@ class ZombieDefense {
     zombies = new Zombie[maxZombies];
     numBreached = 0;
     c = color(0, 255, 0);
+    quotePrimed = false;
   }
 
   void stopPlayer() {
@@ -46,21 +48,19 @@ class ZombieDefense {
   }
   
   int tick() {
+    color initColor = c;
+    float closestZombie = width;
     for(int i = 0; i < numZombies; i++) {
       zombies[i].moveZombie();
-      if(zombies[i].xPos <= 100) {
+      if (zombies[i].xPos <= 100) {
         dead = true;
         numBreached++;
       }
-      if(zombies[i].xPos <= 575 && (c == color(0, 255, 0))) {
-        c = color(255, 255, 0);
+      
+      if (zombies[i].xPos <= closestZombie) {
+        closestZombie = zombies[i].xPos;
       }
-      else if(zombies[i].xPos <= 300 && (c == color(255, 255, 0) || c == color(0, 255, 0))) {
-        c = color(255, 0, 0);
-      }
-      else if (c == color(0, 255, 0)) {
-        c = color(0, 255, 0);
-      }
+      
       if(dead) {
         if(i + 1 != numZombies) {
           zombies[i] = zombies[i+1];
@@ -76,6 +76,19 @@ class ZombieDefense {
         }
       }
     }
+    
+      if(closestZombie <= 300) {
+        c = color(255, 0, 0);
+      } else if(closestZombie <= 575) {
+        c = color(255, 255, 0);
+      } else {
+        c = color(0, 255, 0);
+      }
+      
+      if (c == color(255, 0, 0) && initColor != color(255, 0, 0)) {
+        quotePrimed = true;  
+      }
+    
     dead = false;
     
     if(numZombies != maxZombies) {
