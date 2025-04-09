@@ -18,7 +18,7 @@ class CrankGenerator {
   
   CrankGenerator() {
     lightLevel = 100;
-    decreaseRate = 0.4;
+    decreaseRate = 0.25;
     crankAngle = 0;
     lastCrankAngle = 0;
     isDragging = false;
@@ -27,7 +27,7 @@ class CrankGenerator {
     crankX = width/2;
     crankY = height/2;
     crankRadius = 100;
-    handleRadius = 20;
+    handleRadius = 25;
     handleDistance = crankRadius;
     updateHandlePosition();
     
@@ -58,7 +58,7 @@ class CrankGenerator {
       if (angleDiff < -PI) angleDiff += TWO_PI;
       
       crankAngle = newAngle;
-      lightLevel += abs(angleDiff) * 25;
+      lightLevel += abs(angleDiff) * 35;
       if (lightLevel > 100) {
         lightLevel = 100;
       }

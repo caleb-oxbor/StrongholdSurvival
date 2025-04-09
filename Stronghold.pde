@@ -123,21 +123,21 @@ class Game {
       minigame1_interval = 600;
       minigame1.decreaseRate = 0.3;
       minigame1.increaseRate = 10;
-      minigame3.decreaseRate = 0.3;
+      minigame3.decreaseRate = 0.15;
     } 
     else if (difficulty.equals("medium")) {
       gameTimeTotal = 3 * 60 * 1000; // 3 minutes in milliseconds
       minigame1_interval = 500;
       minigame1.decreaseRate = 0.5;
       minigame1.increaseRate = 8;
-      minigame3.decreaseRate = 0.4;
+      minigame3.decreaseRate = 0.25;
     } 
     else if (difficulty.equals("hard")) {
       gameTimeTotal = 5 * 60 * 1000; // 5 minutes in milliseconds
       minigame1_interval = 400;
       minigame1.decreaseRate = 0.7;
       minigame1.increaseRate = 6;
-      minigame3.decreaseRate = 0.6;
+      minigame3.decreaseRate = 0.4;
     }
   }
   
