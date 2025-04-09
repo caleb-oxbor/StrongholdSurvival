@@ -39,12 +39,15 @@ class Game {
   // minigames and their timers
   GasPump minigame1;
   ZombieDefense minigame2;
+  CrankGenerator minigame3;
   int minigame1_interval = 500; // 500 ms
   int minigame2_interval_1 = 45; // Zombie
   int minigame2_interval_2 = 1; // Bullet
+  int minigame3_interval = 30; // Crank Light
   int minigame1_lastTime = 0;
   int minigame2_lastTime_1 = 0;
   int minigame2_lastTime_2 = 0;
+  int minigame3_lastTime = 0;
   
   // SFX
   PApplet parent;
@@ -68,14 +71,17 @@ class Game {
   boolean playerMovingRight = false;
   
   int minigame1X = 200;
-  int minigame1Y = 300;
+  int minigame1Y = 200;
   int minigame2X = width - 200;
-  int minigame2Y = 300;
+  int minigame2Y = 200;
+  int minigame3X = width/2;
+  int minigame3Y = 380;
   
   Game(PApplet p) {
     parent = p;
     minigame1 = new GasPump();
     minigame2 = new ZombieDefense();
+    minigame3 = new CrankGenerator();
     lives = 5;
     setupDifficulty("medium");
     
@@ -94,6 +100,7 @@ class Game {
     parent = p;
     minigame1 = new GasPump();
     minigame2 = new ZombieDefense();
+    minigame3 = new CrankGenerator();
     lives = livesArg;
     setupDifficulty("medium");
     winSound = new SoundFile(parent, "Win.mp3");
@@ -116,18 +123,21 @@ class Game {
       minigame1_interval = 600;
       minigame1.decreaseRate = 0.3;
       minigame1.increaseRate = 10;
+      minigame3.decreaseRate = 0.3;
     } 
     else if (difficulty.equals("medium")) {
       gameTimeTotal = 3 * 60 * 1000; // 3 minutes in milliseconds
       minigame1_interval = 500;
       minigame1.decreaseRate = 0.5;
       minigame1.increaseRate = 8;
+      minigame3.decreaseRate = 0.4;
     } 
     else if (difficulty.equals("hard")) {
       gameTimeTotal = 5 * 60 * 1000; // 5 minutes in milliseconds
       minigame1_interval = 400;
       minigame1.decreaseRate = 0.7;
       minigame1.increaseRate = 6;
+      minigame3.decreaseRate = 0.6;
     }
   }
   
@@ -277,13 +287,24 @@ class Game {
         stroke(0);
         
         if (playerX >= minigame2X && playerX + 20 <= minigame2X + 50 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 50) {
-          // we are on the minigame1 door
+          // we are on the minigame2 door
           strokeWeight(2);
           stroke(255);
         }
         fill(minigame2.getColor());
         rectMode(CORNER);
         rect(minigame2X, minigame2Y, 50, 50);
+        strokeWeight(1);
+        stroke(0);
+        
+        if (playerX >= minigame3X && playerX + 20 <= minigame3X + 50 && playerY >= minigame3Y && playerY + 20 <= minigame3Y + 50) {
+          // we are on the minigame3 door
+          strokeWeight(2);
+          stroke(255);
+        }
+        fill(minigame3.getColor());
+        rectMode(CORNER);
+        rect(minigame3X, minigame3Y, 50, 50);
         strokeWeight(1);
         stroke(0);
         
@@ -298,6 +319,9 @@ class Game {
       }
       else if (roomID == 2){
         minigame2.display();
+      }
+      else if (roomID == 3){
+        minigame3.display();
       }
     } 
       else {  // Not started, display menus
@@ -470,6 +494,9 @@ class Game {
       if (roomID == 1) {
         minigame1.handleMousePressed();
       }
+      else if (roomID == 3) {
+        minigame3.handleMousePressed();
+      }
     } 
     else {
       // Handle menu interactions
@@ -572,6 +599,12 @@ class Game {
             transitionDest = 2;
             stopPlayer();
           }
+          else if (playerX >= minigame3X && playerX + 20 <= minigame3X + 50 && playerY >= minigame3Y && playerY + 20 <= minigame3Y + 50){
+            stopPlayer();
+            transitioning = true;
+            transitionDest = 3;
+            stopPlayer();
+          }
         }
         
         // we are in the main room. move the player around
@@ -625,6 +658,7 @@ class Game {
     playerY = height/2;
     minigame1 = new GasPump();
     minigame2 = new ZombieDefense();
+    minigame3 = new CrankGenerator();
     setupDifficulty(difficulty);
     
     // Reset player movement
@@ -668,10 +702,16 @@ class Game {
         soundVolume = constrain((mouseX - (width/2 - 150)) / 300.0, 0, 1);
       }
     }
+    else if (started && roomID == 3) {
+      minigame3.handleMouseDragged();
+    }
   }
   
   void handleMouseReleased() {
     isDraggingSlider = false;
+    if (started && roomID == 3) {
+      minigame3.handleMouseReleased();
+    }
   }
   
   void applyVolumeSettings() {
@@ -727,6 +767,20 @@ class Game {
       if (millis() - minigame2_lastTime_2 >= minigame2_interval_2) {
         minigame2.tick2();
         minigame2_lastTime_2 = millis();
+      }
+      
+      // Crank Light
+      if (millis() - minigame3_lastTime >= minigame3_interval) {
+        if (minigame3.tick() == -1) {
+          lives--;
+          if (lives > 0) {
+            hurtSound[(int)random(3)].play();
+          }
+        }
+        if (minigame3.quotePrimed) {
+          minigame3.quotePrimed = false;
+        }
+        minigame3_lastTime = millis();
       }
       
       // coins
