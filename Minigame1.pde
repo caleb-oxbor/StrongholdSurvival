@@ -38,9 +38,11 @@ class GasPump {
   
   void handleMousePressed() {
     // first make sure they're actually clicking the button
-    fuelPercentage += increaseRate;
-    if (fuelPercentage >= 100) {
-      fuelPercentage = 100;
+    if (mouseX > width/2 + 100 && mouseX < width/2 + 160 && mouseY > height/2 + 20 && mouseY < height/2 + 80) {
+      fuelPercentage += increaseRate;
+      if (fuelPercentage >= 100) {
+        fuelPercentage = 100;
+      }
     }
   }
   
@@ -52,6 +54,16 @@ class GasPump {
     rectMode(CORNER);
     fill(230, 172, 39); // this is a good gasoline color according to Google
     rect((width/2 - 25), (height/2 + 195), 50, -(fuelPercentage * 3));
+    
+    // pump button
+    if (mouseX > width/2 + 100 && mouseX < width/2 + 160 && mouseY > height/2 + 20 && mouseY < height/2 + 80) {
+      strokeWeight(2);
+      stroke(255);
+    }
+    fill(#F0DB1D);
+    rect(width/2 + 100, height/2 + 20, 60, 60);
+    strokeWeight(1);
+    stroke(0);
   }
   
   color getColor() {

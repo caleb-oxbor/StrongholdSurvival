@@ -376,13 +376,7 @@ class Game {
     fill(255);
     textAlign(CENTER, BOTTOM);
     textSize(16);
-    if (difficulty.equals("easy")) {
-      text("Survive for 1 minute", width/2, height - 20);
-    } else if (difficulty.equals("medium")) {
-      text("Survive for 3 minutes", width/2, height - 20);
-    } else if (difficulty.equals("hard")) {
-      text("Survive for 5 minutes", width/2, height - 20);
-    }
+    text("Survive until help arrives!", width/2, height - 20);
   }
   
   void settingsMenu() {
