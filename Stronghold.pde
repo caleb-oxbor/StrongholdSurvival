@@ -552,6 +552,12 @@ class Game {
         return;
       }
       
+      if (key == 'p' || key == 'P') { // Pause or settings
+        started = false;
+        gameState = 2; // Go to settings
+        return;
+      }
+      
       if (roomID == 0) {
         if (key == 'e' || key == 'E') {
           // trying to transition to room, check which one
@@ -566,12 +572,6 @@ class Game {
             transitionDest = 2;
             stopPlayer();
           }
-        }
-        
-        if (key == 'p' || key == 'P') { // Pause or settings
-          started = false;
-          gameState = 2; // Go to settings
-          return;
         }
         
         // we are in the main room. move the player around
