@@ -18,6 +18,14 @@ void mousePressed() {
   game.handleMousePressed(); 
 }
 
+void mouseDragged() {
+  game.handleMouseDragged();
+}
+
+void mouseReleased() {
+  game.handleMouseReleased();
+}
+
 void keyPressed() {
   game.handleKeyPressed(key, keyCode);
 }

@@ -462,6 +462,8 @@ class Game {
     coins += minigame2.getCoins();
   }
   
+  boolean isDraggingSlider = false;
+  
   void handleMousePressed() {
     if (started) {
       // check roomID and do stuff based on what room user is in
@@ -512,6 +514,7 @@ class Game {
         if (mouseY >= height/3 + 30 && mouseY <= height/3 + 70 && 
             mouseX >= width/2 - 150 && mouseX <= width/2 + 150) {
           soundVolume = constrain((mouseX - (width/2 - 150)) / 300.0, 0, 1);
+          isDraggingSlider = true;
         }
         
         int buttonY = height - 100;
@@ -659,9 +662,35 @@ class Game {
     }
   }
   
+  void handleMouseDragged() {
+    if (!started && gameState == 2 && isDraggingSlider) {
+      if (mouseX >= width/2 - 150 && mouseX <= width/2 + 150) {
+        soundVolume = constrain((mouseX - (width/2 - 150)) / 300.0, 0, 1);
+      }
+    }
+  }
+  
+  void handleMouseReleased() {
+    isDraggingSlider = false;
+  }
+  
+  void applyVolumeSettings() {
+    winSound.amp(soundVolume);
+    loseSound.amp(soundVolume);
+    helpAlmostHereSound.amp(soundVolume);
+    gasLowSound.amp(soundVolume);
+    zombieDoorstepSound.amp(soundVolume);
+    
+    for (int i = 0; i < hurtSound.length; i++) {
+      hurtSound[i].amp(soundVolume);
+    }
+  }
+  
   void update() {
   // if started, update all minigames based on their own timers
   // if a minigame's timer is going off, tick it and check for important info
+    applyVolumeSettings();
+    
     if (started && gameState == 1) {
       if (millis() - minigame1_lastTime >= minigame1_interval) {
         if (minigame1.tick() == -1) {
