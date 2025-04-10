@@ -1,7 +1,6 @@
 // this is what u run to play the game
 
 Game game;
-
 void setup() {
   game = new Game(this, 3);  // you can pass an int here to set lives. default is 5
   size(960, 540);
@@ -33,7 +32,7 @@ void keyPressed() {
     }
     if (key == 'r' || key == 'R') {
       game.shop.shopOpen = true;
-      //print("shop open true");
+      print("shop open true");
     }
   }
   game.handleKeyPressed(key, keyCode);

@@ -1,5 +1,4 @@
 class Shop {
-  Game game;
   int itemCost;
   boolean shopOpen = false;
   
