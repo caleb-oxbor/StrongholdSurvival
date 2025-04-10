@@ -1,7 +1,8 @@
 import processing.sound.*;
 // overall game class
+
 class Game {
-  
+  Shop shop;
   // general game logic vars
   int lives = 3;
   int score = 0;
@@ -179,6 +180,22 @@ class Game {
     }
   }
   
+  // draws the shop when opened
+  void drawShopOverlay() {
+    fill(30, 30, 30, 220);
+    rect(width / 2 - 200, height / 2 - 150, 400, 300, 20);
+  
+    fill(255);
+    textAlign(CENTER);
+    textSize(24);
+    text("Shop", width / 2, height / 2 - 100);
+  
+    textSize(16);
+    text("Press 'B' to buy an item for " + shop.itemCost + " coins", width / 2, height / 2 - 40);
+    text("You have " + coins + " coins", width / 2, height / 2);
+    text("Press 'E' to exit", width / 2, height / 2 + 40);
+}
+
   void display() {
     if (started) {
       // Update and check timer
@@ -227,6 +244,12 @@ class Game {
         text("Press R to return to menu", width/2, height/2 + 50);
         return;
       }
+      // shop initialization; bool handled in main
+      shop = new Shop(this, 20);
+      if (shop.shopOpen) {
+        drawShopOverlay();  // draw the popup
+      }
+
       
       // White top bar overlay
       fill(255);

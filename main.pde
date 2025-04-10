@@ -27,6 +27,15 @@ void mouseReleased() {
 }
 
 void keyPressed() {
+  if (game.shop != null) {
+    if (key == 'c' || key == 'C') {
+      game.shop.addCoins(5);
+    }
+    if (key == 'r' || key == 'R') {
+      game.shop.shopOpen = true;
+      //print("shop open true");
+    }
+  }
   game.handleKeyPressed(key, keyCode);
 }
 

@@ -8,7 +8,7 @@ class GasPump {
   
   GasPump() {
     fuelPercentage = 100;
-    decreaseRate = -0.5;
+    decreaseRate = -0.3;
     increaseRate = 8;
     quotePrimed = false;
   }
