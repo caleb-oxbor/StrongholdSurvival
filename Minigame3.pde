@@ -73,11 +73,11 @@ class CrankGenerator {
   }
   
   int tick() {
-    boolean startedHigh = (lightLevel >= 25);
+    boolean startedHigh = (lightLevel >= 30);
     
     lightLevel -= decreaseRate;
     
-    if (startedHigh && lightLevel < 25) {
+    if (startedHigh && lightLevel < 30) {
       quotePrimed = true;
     }
     

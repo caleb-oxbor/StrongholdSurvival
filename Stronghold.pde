@@ -44,7 +44,7 @@ class Game {
   int minigame1_interval = 500; // 500 ms
   int minigame2_interval_1 = 45; // Zombie
   int minigame2_interval_2 = 1; // Bullet
-  int minigame3_interval = 30; // Crank Light
+  int minigame3_interval = 100; // Crank Light
   int minigame1_lastTime = 0;
   int minigame2_lastTime_1 = 0;
   int minigame2_lastTime_2 = 0;
@@ -57,6 +57,7 @@ class Game {
   SoundFile helpAlmostHereSound;
   SoundFile gasLowSound;
   SoundFile zombieDoorstepSound;
+  SoundFile generatorLowSound;
   boolean endQuotePlayed = false;
   boolean helpAlmostHerePlayed = false;
   
@@ -93,8 +94,9 @@ class Game {
     hurtSound[1] = new SoundFile(parent, "Hurt2.mp3");
     hurtSound[2] = new SoundFile(parent, "Hurt3.mp3");
     helpAlmostHereSound = new SoundFile(parent, "HelpAlmostHere.mp3");
-    gasLowSound = new SoundFile(parent, "gasLow.mp3");
+    gasLowSound = new SoundFile(parent, "GasLow.mp3");
     zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
+    generatorLowSound = new SoundFile(parent, "GeneratorLow.mp3");
   }
   
   Game(PApplet p, int livesArg) {
@@ -113,6 +115,7 @@ class Game {
     helpAlmostHereSound = new SoundFile(parent, "HelpAlmostHere.mp3");
     gasLowSound = new SoundFile(parent, "GasLow.mp3");
     zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
+    generatorLowSound = new SoundFile(parent, "GeneratorLow.mp3");
   }
   
   void setupDifficulty(String diff) {
@@ -249,50 +252,6 @@ class Game {
       if (shop.shopOpen) {
         drawShopOverlay();  // draw the popup
       }
-
-      
-      // White top bar overlay
-      fill(255);
-      rectMode(CORNER);
-      rect(-5, -5, width + 5, 90);
-      
-      // Hearts
-      imageMode(CORNER);
-      int heartCorner = 0;
-      for (int i = 0; i < lives; i++) {
-        image(heart, heartCorner, -5, 100, 100);
-        heartCorner += 85;
-      }
-      
-      // coins
-      fill(200, 200, 0);
-      rect(width/2 - 10, 30, 20, 20);
-      textAlign(RIGHT, CENTER);
-      textSize(40);
-      text(coins, width/2 + 50, 40);
-      
-      // Display timer
-      fill(0);
-      textAlign(RIGHT, CENTER);
-      textSize(30);
-      
-      // Format time as MM:SS
-      int secondsLeft = timeLeft / 1000;
-      int minutes = secondsLeft / 60;
-      int seconds = secondsLeft % 60;
-      
-      String timeString = nf(minutes, 2) + ":" + nf(seconds, 2);
-      
-      // Change color when time is running low (less than 30 seconds)
-      if (secondsLeft < 30) {
-        fill(255, 0, 0);
-        if (!helpAlmostHerePlayed) {
-          helpAlmostHereSound.play();
-          helpAlmostHerePlayed = true;
-        }
-      }
-      
-      text(timeString, width - 20, 45);
       
       if (roomID == 0) {  // in main room
         // noStroke();
@@ -346,6 +305,49 @@ class Game {
       else if (roomID == 3){
         minigame3.display();
       }
+      
+      // White top bar overlay
+      fill(255);
+      rectMode(CORNER);
+      rect(-5, -5, width + 5, 90);
+      
+      // Hearts
+      imageMode(CORNER);
+      int heartCorner = 0;
+      for (int i = 0; i < lives; i++) {
+        image(heart, heartCorner, -5, 100, 100);
+        heartCorner += 85;
+      }
+      
+      // coins
+      fill(200, 200, 0);
+      rect(width/2 - 10, 30, 20, 20);
+      textAlign(RIGHT, CENTER);
+      textSize(40);
+      text(coins, width/2 + 50, 40);
+      
+      // Display timer
+      fill(0);
+      textAlign(RIGHT, CENTER);
+      textSize(30);
+      
+      // Format time as MM:SS
+      int secondsLeft = timeLeft / 1000;
+      int minutes = secondsLeft / 60;
+      int seconds = secondsLeft % 60;
+      
+      String timeString = nf(minutes, 2) + ":" + nf(seconds, 2);
+      
+      // Change color when time is running low (less than 30 seconds)
+      if (secondsLeft < 30) {
+        fill(255, 0, 0);
+        if (!helpAlmostHerePlayed) {
+          helpAlmostHereSound.play();
+          helpAlmostHerePlayed = true;
+        }
+      }
+      
+      text(timeString, width - 20, 45);
     } 
       else {  // Not started, display menus
         if (gameState == 0) {
@@ -802,6 +804,9 @@ class Game {
         }
         if (minigame3.quotePrimed) {
           minigame3.quotePrimed = false;
+          if (roomID != 3) {
+            generatorLowSound.play();
+          }
         }
         minigame3_lastTime = millis();
       }
