@@ -1,6 +1,7 @@
 // this is what u run to play the game
 
 Game game;
+int openOrCloseShop = 3;
 void setup() {
   game = new Game(this, 3);  // you can pass an int here to set lives. default is 5
   size(960, 540);
@@ -11,6 +12,9 @@ void draw() {
   background(150);
   game.update();
   game.display(); 
+  if (game.shopOpen) {
+    game.drawShopOverlay();
+  }
 }
 
 void mousePressed() {
@@ -31,8 +35,7 @@ void keyPressed() {
       game.shop.addCoins(5);
     }
     if (key == 'r' || key == 'R') {
-      game.shop.shopOpen = true;
-      print("shop open true");
+      game.shopOpen = !game.shopOpen;
     }
   }
   game.handleKeyPressed(key, keyCode);

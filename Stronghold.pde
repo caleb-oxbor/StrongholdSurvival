@@ -8,9 +8,15 @@ class Game {
   int score = 0;
   int coins = 0;
   boolean started = false;
+  boolean shopOpen = false;
   int roomID = 0; // 0 is main room, 1 is gas pump, 2 is zombie defend
-  PImage heart = loadImage("heart1.png");
+  
+  // images 
+  PImage heart = loadImage("heart2.png");
   PImage settings = loadImage("gear.png");
+  PImage door = loadImage("door2.png");
+  PImage healthPot = loadImage("health pot.png");
+  PImage title = loadImage("strongholdTitle.png");
   
   // transition vars
   int transitionAlpha = 0;
@@ -189,11 +195,13 @@ class Game {
     textAlign(CENTER);
     textSize(24);
     text("Shop", width / 2, height / 2 - 100);
-  
+    image(healthPot, width/3, height/3, 100, 100);
+    image(healthPot, (width/3) +110, height/3, 100, 100);
+    image(healthPot, (width/3) + 220, height/3, 100, 100);
     textSize(16);
-    text("Press 'B' to buy an item for " + shop.itemCost + " coins", width / 2, height / 2 - 40);
-    text("You have " + coins + " coins", width / 2, height / 2);
-    text("Press 'E' to exit", width / 2, height / 2 + 40);
+    text("Press 'B' to buy an health potion for " + shop.itemCost + " coins!", width / 2, height / 2+ 20);
+    text("You currently have " + coins + " coins.", width / 2, height / 2 + 60);
+    text("Press 'R' to exit", width / 2, height / 2 + 100);
 }
 
   void display() {
@@ -246,10 +254,6 @@ class Game {
       }
       // shop initialization; bool handled in main
       shop = new Shop(this, 20);
-      if (shop.shopOpen) {
-        drawShopOverlay();  // draw the popup
-      }
-
       
       // White top bar overlay
       fill(255);
@@ -260,7 +264,7 @@ class Game {
       imageMode(CORNER);
       int heartCorner = 0;
       for (int i = 0; i < lives; i++) {
-        image(heart, heartCorner, -5, 100, 100);
+        image(heart, heartCorner, -30, 150, 150);
         heartCorner += 85;
       }
       
@@ -302,10 +306,11 @@ class Game {
           // we are on the minigame1 door
           strokeWeight(2);
           stroke(255);
-        }
+        } 
         fill(minigame1.getColor());
         rectMode(CORNER);
-        rect(minigame1X, minigame1Y, 50, 50);
+        rect(minigame1X+40, minigame1Y+15, 30, 60);
+        image(door, minigame1X, minigame1Y, 100, 100);
         strokeWeight(1);
         stroke(0);
         
@@ -316,7 +321,8 @@ class Game {
         }
         fill(minigame2.getColor());
         rectMode(CORNER);
-        rect(minigame2X, minigame2Y, 50, 50);
+        rect(minigame2X+40, minigame2Y+15, 30, 60);
+        image(door, minigame2X, minigame2Y, 100, 100);
         strokeWeight(1);
         stroke(0);
         
@@ -327,7 +333,8 @@ class Game {
         }
         fill(minigame3.getColor());
         rectMode(CORNER);
-        rect(minigame3X, minigame3Y, 50, 50);
+         rect(minigame3X+40, minigame3Y+15, 30, 60);
+        image(door, minigame3X, minigame3Y, 100, 100);
         strokeWeight(1);
         stroke(0);
         
@@ -364,10 +371,11 @@ class Game {
     background(30, 60, 90);
     
     // Title
-    fill(255);
-    textAlign(CENTER, CENTER);
-    textSize(50);
-    text("STRONGHOLD SURVIVAL", width/2, height/5);
+    //fill(255);
+    //textAlign(CENTER, CENTER);
+    //textSize(50);
+    //text("STRONGHOLD SURVIVAL", width/2, height/5);
+    image(title, width/2, height/5, 500, 200);
     
     // Difficulty buttons
     rectMode(CORNER);
