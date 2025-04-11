@@ -58,7 +58,7 @@ class CrankGenerator {
       if (angleDiff < -PI) angleDiff += TWO_PI;
       
       crankAngle = newAngle;
-      lightLevel += abs(angleDiff) * 35;
+      lightLevel += abs(angleDiff) * 3;
       if (lightLevel > 100) {
         lightLevel = 100;
       }

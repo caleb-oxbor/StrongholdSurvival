@@ -52,7 +52,7 @@ class ZombieDefense {
     float closestZombie = width;
     for(int i = 0; i < numZombies; i++) {
       zombies[i].moveZombie();
-      if (zombies[i].xPos <= 100) {
+      if (zombies[i].xPos <= 95) {
         dead = true;
         numBreached++;
       }
@@ -232,7 +232,7 @@ class Bullet {
   float vx;
   
   Bullet(float yInitial) {
-    xPos = 126;
+    xPos = 100;
     yPos = yInitial - 30;
     vx = 5;
   }

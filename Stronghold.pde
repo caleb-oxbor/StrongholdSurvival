@@ -23,11 +23,12 @@ class Game {
   int gameState = 0; // 0=main menu, 1=game, 2=settings, 3=win/loss screen
   String difficulty = "medium"; // "easy", "medium", "hard"
   
-  // timer variables
+  // overall game timers
   int gameTimeTotal; // total time to survive in milliseconds
   int gameStartTime; // when the game started
   int timeLeft; // time left in milliseconds
-  int quoteTimer; // for spacing out voicelines
+  int quoteTimer; 
+  int quoteSpacing; // for spacing out voicelines
   
   // start menu vars
   int startButtonSize = 50;
@@ -97,6 +98,8 @@ class Game {
     gasLowSound = new SoundFile(parent, "GasLow.mp3");
     zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
     generatorLowSound = new SoundFile(parent, "GeneratorLow.mp3");
+    quoteTimer = millis();
+    quoteSpacing = 5000;
   }
   
   Game(PApplet p, int livesArg) {
@@ -116,6 +119,8 @@ class Game {
     gasLowSound = new SoundFile(parent, "GasLow.mp3");
     zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
     generatorLowSound = new SoundFile(parent, "GeneratorLow.mp3");
+    quoteTimer = millis();
+    quoteSpacing = 5000;
   }
   
   void setupDifficulty(String diff) {
@@ -142,6 +147,19 @@ class Game {
       minigame1.decreaseRate = 0.7;
       minigame1.increaseRate = 6;
       minigame3.decreaseRate = 0.4;
+    }
+  }
+  
+  void playQuote(SoundFile quote) {
+    // play game over quote no matter what
+    if (quote == winSound || quote == loseSound) {
+      quote.play();
+      quoteTimer = millis();
+    }
+    
+    else if (millis() - quoteTimer >= quoteSpacing) {
+      quoteTimer = millis();
+      quote.play();
     }
   }
   
@@ -207,7 +225,8 @@ class Game {
       if (timeLeft <= 0 && lives > 0) {
         // You win! Game completed successfully
         if (!winSound.isPlaying() && !endQuotePlayed) {
-          winSound.play();
+          playQuote(winSound);
+          // winSound.play ();
           endQuotePlayed = true;
         }
         
@@ -230,7 +249,8 @@ class Game {
       
       if (lives <= 0) {
         if (!loseSound.isPlaying() && !endQuotePlayed) {
-          loseSound.play();
+          playQuote(loseSound);
+          // loseSound.play ();
           endQuotePlayed = true;
         }
         
@@ -342,7 +362,8 @@ class Game {
       if (secondsLeft < 30) {
         fill(255, 0, 0);
         if (!helpAlmostHerePlayed) {
-          helpAlmostHereSound.play();
+          playQuote(helpAlmostHereSound);
+          // helpAlmostHereSound.play ();
           helpAlmostHerePlayed = true;
         }
       }
@@ -761,13 +782,15 @@ class Game {
         if (minigame1.tick() == -1) {
           lives--;
           if (lives > 0) {
-            hurtSound[(int)random(3)].play();
+            playQuote(hurtSound[(int)random(3)]);
+            // hurtSound[(int)random(3)].play ();
           }
         }
         if (minigame1.quotePrimed) {
           minigame1.quotePrimed = false;
           if (roomID != 1) {
-            gasLowSound.play();
+            playQuote(gasLowSound);
+            // gasLowSound.play ();
           }
         }
         minigame1_lastTime = millis();
@@ -777,13 +800,15 @@ class Game {
         if (minigame2.tick() == -1) {
           lives--;
           if (lives > 0) {
-            hurtSound[(int)random(3)].play();
+            playQuote(hurtSound[(int)random(3)]);
+            // hurtSound[(int)random(3)].play ();
           }
         }
         if (minigame2.quotePrimed) {
           minigame2.quotePrimed = false;
           if (roomID != 2) {
-            zombieDoorstepSound.play();
+            playQuote(zombieDoorstepSound);
+            // zombieDoorstepSound.play ();
           }
         }
         minigame2_lastTime_1 = millis();
@@ -799,13 +824,15 @@ class Game {
         if (minigame3.tick() == -1) {
           lives--;
           if (lives > 0) {
-            hurtSound[(int)random(3)].play();
+            playQuote(hurtSound[(int)random(3)]);
+             // hurtSound[(int)random(3)].play ();
           }
         }
         if (minigame3.quotePrimed) {
           minigame3.quotePrimed = false;
           if (roomID != 3) {
-            generatorLowSound.play();
+            playQuote(generatorLowSound);
+            // generatorLowSound.play ();
           }
         }
         minigame3_lastTime = millis();
