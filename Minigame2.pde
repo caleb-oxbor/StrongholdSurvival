@@ -1,43 +1,54 @@
 // Defend minigame
 
+// Main minigame class driver
 class ZombieDefense {
+  // Player and mingame attributes
   float yPos;
   boolean playerMovingUp = false;
   boolean playerMovingDown = false;
   int minigameCoins = 0;
   boolean quotePrimed;
   
+  // Gun attributes
   boolean fire;
   boolean fired;
   int ammo;
   Bullet[] firedBullets;
   
+  // Zombie attributes
   int numZombies;
   int maxZombies;
   Zombie[] zombies;
   boolean dead = false;
   int numBreached;
   
+  // Door color
   color c;
   
+  // Constructor
   ZombieDefense() {
+    // set default pos to be in middle
     yPos = height/2 + 85;
     fired = false;
     ammo = 10000;
     firedBullets = new Bullet[ammo];
+    // Set the max number of zombies to be 10
     numZombies = 0;
     maxZombies = 10;
     zombies = new Zombie[maxZombies];
     numBreached = 0;
+    // Set color to be green at the start
     c = color(0, 255, 0);
     quotePrimed = false;
   }
 
+  // Stop the player from moving when leaving the game
   void stopPlayer() {
     playerMovingUp = false;
     playerMovingDown = false;
   }
 
+  // Update the player positoion based on if they were moving up or down
   void updatePlayerPos() {
     if(playerMovingUp && yPos > 165) {
       yPos -= 2;
@@ -47,20 +58,24 @@ class ZombieDefense {
     }
   }
   
+  // Tick that handles the zombie logic
   int tick() {
     color initColor = c;
     float closestZombie = width;
     for(int i = 0; i < numZombies; i++) {
       zombies[i].moveZombie();
-      if (zombies[i].xPos <= 100) {
+      // Check if a zombie has breached the stronghold
+      if (zombies[i].xPos <= 95) {
         dead = true;
         numBreached++;
       }
       
+      // Get the pos of closest zombie
       if (zombies[i].xPos <= closestZombie) {
         closestZombie = zombies[i].xPos;
       }
       
+      // Breach logic (Clears zombie)
       if(dead) {
         if(i + 1 != numZombies) {
           zombies[i] = zombies[i+1];
@@ -77,6 +92,7 @@ class ZombieDefense {
       }
     }
     
+      // Sets door color
       if(closestZombie <= 300) {
         c = color(255, 0, 0);
       } else if(closestZombie <= 575) {
@@ -91,10 +107,13 @@ class ZombieDefense {
     
     dead = false;
     
+    // Creates a zombie if the capacity isn't exceeded
     if(numZombies != maxZombies) {
+      // 1 in 20 chance to spawn every tick
       int chance = int(random(1, 20));
       if(chance == 1) {
         float ZombieYPos = random(125, height - 50);
+        // Random chance for gold zombie
         int rand = int(random(1, 51));
         boolean gold = false;
         if(rand == 1) {
@@ -108,6 +127,7 @@ class ZombieDefense {
     return 0;
   }
   
+  // Tick that handles the bullet logic
   void tick2() {
     for(int i = 0; i < 10000 - ammo; i++) {
        firedBullets[i].moveBullet();
@@ -121,6 +141,7 @@ class ZombieDefense {
              minigameCoins++;
            }
          }
+         // Clear zombie
          if(dead) {
            if(j + 1 != numZombies) {
              zombies[j] = zombies[j+1];
@@ -136,6 +157,7 @@ class ZombieDefense {
     return;
   }
   
+  // Handles key presses from player
   void handleKeyPressed(char key, int keyCode) {
     // Fire gun
     if(key == 'e' || key == 'E') {
@@ -150,6 +172,7 @@ class ZombieDefense {
     }
   }
   
+    // Handles key releases from player
     void handleKeyReleased(char key, int keyCode) {
     // Fire gun
     if((key == 'e' || key == 'E') && fire) {
@@ -164,12 +187,14 @@ class ZombieDefense {
     }
   }
   
+  // Sends minigame coins to main stronghold
   int getCoins() {
     int temp = minigameCoins;
     minigameCoins = 0;
     return temp;
   }
   
+  // Main display for minigame
   void display() {
     noStroke();
     // dirt
@@ -186,6 +211,7 @@ class ZombieDefense {
     stroke(0);
     fill(0, 0, 255);
     rect(10, yPos - 70, 70, 70);
+    // Display zombies
     for(int i = 0; i < numZombies; i++) {
       fill(#487042);
       if(zombies[i].golden) {
@@ -196,6 +222,7 @@ class ZombieDefense {
       rect(xPos, yZombie, 30, 30);
     }
     
+    // Display bullets
     for(int i = 0; i < 10000 - ammo; i++) {
       fill(35);
       float xPos = firedBullets[i].xPos;
@@ -213,6 +240,7 @@ class ZombieDefense {
     }
   }
   
+  // Getters
   color getColor() {
       return c;
   }
@@ -224,25 +252,28 @@ class ZombieDefense {
 }
 
 
-
-
+// Bullet class
 class Bullet {
+  // Holds position and speed
   float xPos;
   float yPos;
   float vx;
   
   Bullet(float yInitial) {
-    xPos = 126;
+    xPos = 100;
     yPos = yInitial - 30;
     vx = 5;
   }
   
+  // Function to move the bullet
   void moveBullet() {
     xPos += vx;
   }
 }
 
+// Zombie class
 class Zombie {
+  // Holds postion, speed, and golden status
   float xPos;
   float yPos;
   float vx;
@@ -255,6 +286,7 @@ class Zombie {
     golden = state;
   }
   
+  // Moves the zombie;
   void moveZombie() {
     xPos -= vx;
   }
