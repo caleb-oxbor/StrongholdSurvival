@@ -17,7 +17,9 @@ class Game {
   PImage door = loadImage("door2.png");
   PImage healthPot = loadImage("health pot.png");
   PImage title = loadImage("strongholdTitle.png");
-  
+  PImage playerSprite = loadImage("mc.png");
+
+
   // transition vars
   int transitionAlpha = 0;
   int transitionSpeed = 10;
@@ -83,6 +85,17 @@ class Game {
   int minigame2Y = 200;
   int minigame3X = width/2;
   int minigame3Y = 380;
+  
+  // door hitbox vars
+  int doorHitX1 = minigame1X;  // door's x-position
+  int doorHitY1 = minigame1Y;  // door's y-position
+  int doorHitX2 = minigame2X;
+  int doorHitY2 = minigame2Y;
+  int doorHitX3 = minigame3X;
+  int doorHitY3 = minigame3Y;
+  int doorHitW = 100;
+  int doorHitH = 100;
+
   
   Game(PApplet p) {
     parent = p;
@@ -302,11 +315,15 @@ class Game {
         // noStroke();
         
         // minigame1
-        if (playerX >= minigame1X && playerX + 20 <= minigame1X + 50 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 50) {
-          // we are on the minigame1 door
+        //if (playerX >= minigame1X && playerX + 20 <= minigame1X + 50 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 50) {
+        //  // we are on the minigame1 door
+        //  strokeWeight(2);
+        //  stroke(255);
+        //} 
+        if (playerX >= doorHitX1 && playerX + 20 <= doorHitX1 + doorHitW && playerY >= doorHitY1 && playerY + 20 <= doorHitY1 + doorHitH) {
           strokeWeight(2);
           stroke(255);
-        } 
+        }
         fill(minigame1.getColor());
         rectMode(CORNER);
         rect(minigame1X+40, minigame1Y+15, 30, 60);
@@ -314,7 +331,7 @@ class Game {
         strokeWeight(1);
         stroke(0);
         
-        if (playerX >= minigame2X && playerX + 20 <= minigame2X + 50 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 50) {
+        if (playerX >= doorHitX2 && playerX + 20 <= doorHitX2 + doorHitW && playerY >= doorHitY2 && playerY + 20 <= doorHitY2 + doorHitH) {
           // we are on the minigame2 door
           strokeWeight(2);
           stroke(255);
@@ -326,23 +343,26 @@ class Game {
         strokeWeight(1);
         stroke(0);
         
-        if (playerX >= minigame3X && playerX + 20 <= minigame3X + 50 && playerY >= minigame3Y && playerY + 20 <= minigame3Y + 50) {
+        if (playerX >= doorHitX3 && playerX + 20 <= doorHitX3 + doorHitW && playerY >= doorHitY3 && playerY + 20 <= doorHitY3 + doorHitH) {
           // we are on the minigame3 door
           strokeWeight(2);
           stroke(255);
         }
         fill(minigame3.getColor());
         rectMode(CORNER);
-         rect(minigame3X+40, minigame3Y+15, 30, 60);
+        rect(minigame3X+40, minigame3Y+15, 30, 60);
         image(door, minigame3X, minigame3Y, 100, 100);
         strokeWeight(1);
         stroke(0);
         
         // player
         updatePlayerPos();
-        fill(0, 0, 255);
-        rectMode(CORNER);
-        rect(playerX, playerY, 20, 20);
+        //fill(0, 0, 255);
+        //rectMode(CORNER);
+        //rect(playerX, playerY, 20, 20);
+        imageMode(CENTER);  // or CENTER, depending on your preference
+        image(playerSprite, playerX, playerY, 200, 200);
+
         
       } else if (roomID == 1) {
         minigame1.display();
@@ -619,23 +639,23 @@ class Game {
       if (roomID == 0) {
         if (key == 'e' || key == 'E') {
           // trying to transition to room, check which one
-          if (playerX >= minigame1X && playerX + 20 <= minigame1X + 50 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 50) {
+          if (playerX >= minigame1X && playerX + 20 <= minigame1X + 100 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 100) {
             transitioning = true;
             transitionDest = 1;
             stopPlayer();
-          }
-          else if (playerX >= minigame2X && playerX + 20 <= minigame2X + 50 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 50){
+            }
+          else if (playerX >= minigame2X && playerX + 20 <= minigame2X + 100 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 100) {
             stopPlayer();
             transitioning = true;
             transitionDest = 2;
             stopPlayer();
-          }
-          else if (playerX >= minigame3X && playerX + 20 <= minigame3X + 50 && playerY >= minigame3Y && playerY + 20 <= minigame3Y + 50){
+            }
+          else if (playerX >= minigame3X && playerX + 20 <= minigame3X + 100 && playerY >= minigame3Y && playerY + 20 <= minigame3Y + 100) {
             stopPlayer();
             transitioning = true;
             transitionDest = 3;
             stopPlayer();
-          }
+            }
         }
         
         // we are in the main room. move the player around
