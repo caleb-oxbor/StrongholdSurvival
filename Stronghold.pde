@@ -16,8 +16,15 @@ class Game {
   PImage settings = loadImage("gear.png");
   PImage door = loadImage("door2.png");
   PImage healthPot = loadImage("health pot.png");
+  PImage healthUp = loadImage("healthUp.png");
   PImage title = loadImage("strongholdTitle.png");
   PImage playerSprite = loadImage("mc.png");
+  PImage coinSprite = loadImage("coin.png");
+  PImage mainMenuBG = loadImage("MMbackground.png");
+  PImage MCwalk0 = loadImage("mc walk0.png");
+  PImage MCwalk1 = loadImage("mc walk1.png");
+  PImage MCwalk2 = loadImage("mc walk2.png");
+  PImage MCwalk3 = loadImage("mc walk3.png");
 
 
   // transition vars
@@ -88,9 +95,9 @@ class Game {
   int minigame3X = width/2;
   int minigame3Y = 380;
   
-  // door hitbox vars
-  int doorHitX1 = minigame1X;  // door's x-position
-  int doorHitY1 = minigame1Y;  // door's y-position
+  // door hitbox vars (note for angie: this is dumb, come back and change these vars)
+  int doorHitX1 = minigame1X;
+  int doorHitY1 = minigame1Y;
   int doorHitX2 = minigame2X;
   int doorHitY2 = minigame2Y;
   int doorHitX3 = minigame3X;
@@ -230,7 +237,7 @@ class Game {
     textSize(24);
     text("Shop", width / 2, height / 2 - 100);
     image(healthPot, width/3, height/3, 100, 100);
-    image(healthPot, (width/3) +110, height/3, 100, 100);
+    image(healthUp, (width/3) +90, height/3.5, 150, 150);
     image(healthPot, (width/3) + 220, height/3, 100, 100);
     textSize(16);
     text("Press 'B' to buy an health potion for " + shop.itemCost + " coins!", width / 2, height / 2+ 20);
@@ -335,14 +342,7 @@ class Game {
       text(timeString, width - 20, 45);
       
       if (roomID == 0) {  // in main room
-        // noStroke();
-        
         // minigame1
-        //if (playerX >= minigame1X && playerX + 20 <= minigame1X + 50 && playerY >= minigame1Y && playerY + 20 <= minigame1Y + 50) {
-        //  // we are on the minigame1 door
-        //  strokeWeight(2);
-        //  stroke(255);
-        //} 
         if (playerX >= doorHitX1 && playerX + 20 <= doorHitX1 + doorHitW && playerY >= doorHitY1 && playerY + 20 <= doorHitY1 + doorHitH) {
           strokeWeight(2);
           stroke(255);
@@ -380,10 +380,7 @@ class Game {
         
         // player
         updatePlayerPos();
-        //fill(0, 0, 255);
-        //rectMode(CORNER);
-        //rect(playerX, playerY, 20, 20);
-        imageMode(CENTER);  // or CENTER, depending on your preference
+        imageMode(CENTER);
         image(playerSprite, playerX, playerY, 200, 200);
 
         
@@ -406,16 +403,17 @@ class Game {
       imageMode(CORNER);
       int heartCorner = 0;
       for (int i = 0; i < lives; i++) {
-        image(heart, heartCorner, -5, 100, 100);
+        image(heart, heartCorner, -30, 150, 150);
         heartCorner += 85;
       }
       
       // coins
-      fill(200, 200, 0);
-      rect(width/2 - 10, 30, 20, 20);
+      fill(0);
+      //rect(width/2 - 10, 30, 20, 20);
+      image(coinSprite, width/2 - 10, -10, 110, 110);
       textAlign(RIGHT, CENTER);
       textSize(40);
-      text(coins, width/2 + 50, 40);
+      text(coins, width/2 + 125, 40);
   
       // Display timer
       fill(0);
@@ -455,13 +453,15 @@ class Game {
   }
   
   void mainMenu() {
-    background(30, 60, 90);
-
+    imageMode(CORNER);
+    image(mainMenuBG, 0, 0, width, height);
+    //background(mainMenuBG);
+    imageMode(CENTER);
     image(title, width/2, height/5, 500, 200);
     
     // Difficulty buttons
     rectMode(CORNER);
-    int buttonY = height/2 - 100;
+    int buttonY = height/2 - 65;
     
     // Easy button (1 minute)
     if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
@@ -907,8 +907,6 @@ class Game {
       
       // coins
       updateCoins();
-      
     }
   }
-  
 }
