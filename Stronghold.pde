@@ -297,24 +297,24 @@ class Game {
       rect(-5, -5, width + 5, 90);
       
       // Hearts
-      imageMode(CORNER);
-      int heartCorner = 0;
-      for (int i = 0; i < lives; i++) {
-        image(heart, heartCorner, -30, 150, 150);
-        heartCorner += 85;
-      }
+      //imageMode(CORNER);
+      //int heartCorner = 0;
+      //for (int i = 0; i < lives; i++) {
+      //  image(heart, heartCorner, -30, 150, 150);
+      //  heartCorner += 85;
+      //}
       
-      // coins
-      fill(200, 200, 0);
-      rect(width/2 - 10, 30, 20, 20);
-      textAlign(RIGHT, CENTER);
-      textSize(40);
-      text(coins, width/2 + 50, 40);
+      //// coins
+      //fill(200, 200, 0);
+      //rect(width/2 - 10, 30, 20, 20);
+      //textAlign(RIGHT, CENTER);
+      //textSize(40);
+      //text(coins, width/2 + 50, 40);
       
-      // Display timer
-      fill(0);
-      textAlign(RIGHT, CENTER);
-      textSize(30);
+      //// Display timer
+      //fill(0);
+      //textAlign(RIGHT, CENTER);
+      //textSize(30);
       
       // Format time as MM:SS
       int secondsLeft = timeLeft / 1000;
@@ -333,9 +333,6 @@ class Game {
       }
       
       text(timeString, width - 20, 45);
-      if (shop.shopOpen) {
-        drawShopOverlay();  // draw the popup
-      }
       
       if (roomID == 0) {  // in main room
         // noStroke();
@@ -419,18 +416,18 @@ class Game {
       textAlign(RIGHT, CENTER);
       textSize(40);
       text(coins, width/2 + 50, 40);
-      
+  
       // Display timer
       fill(0);
       textAlign(RIGHT, CENTER);
       textSize(30);
       
       // Format time as MM:SS
-      int secondsLeft = timeLeft / 1000;
-      int minutes = secondsLeft / 60;
-      int seconds = secondsLeft % 60;
+      //int secondsLeft = timeLeft / 1000;
+      //int minutes = secondsLeft / 60;
+      //int seconds = secondsLeft % 60;
       
-      String timeString = nf(minutes, 2) + ":" + nf(seconds, 2);
+      //String timeString = nf(minutes, 2) + ":" + nf(seconds, 2);
       
       // Change color when time is running low (less than 30 seconds)
       if (secondsLeft < 30) {
@@ -459,12 +456,7 @@ class Game {
   
   void mainMenu() {
     background(30, 60, 90);
-    
-    // Title
-    //fill(255);
-    //textAlign(CENTER, CENTER);
-    //textSize(50);
-    //text("STRONGHOLD SURVIVAL", width/2, height/5);
+
     image(title, width/2, height/5, 500, 200);
     
     // Difficulty buttons
