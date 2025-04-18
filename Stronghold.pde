@@ -10,7 +10,13 @@ class Game {
   boolean started = false;
   boolean shopOpen = false;
   int roomID = 0; // 0 is main room, 1 is gas pump, 2 is zombie defend
-  
+  int shopAlpha = 0; // shop fade-in
+
+  // coin stuff
+  ArrayList<Coin> activeCoins = new ArrayList<Coin>();
+  int lastCoinSpawnTime = 0;
+  int coinSpawnInterval = 5000; // 10 seconds
+
   // images 
   PImage heart = loadImage("heart2.png");
   PImage settings = loadImage("gear.png");
@@ -112,6 +118,7 @@ class Game {
     minigame2 = new ZombieDefense();
     minigame3 = new CrankGenerator();
     lives = 5;
+    shop = new Shop(this, 5, 5);
     setupDifficulty("medium");
     
     winSound = new SoundFile(parent, "Win.mp3");
@@ -134,6 +141,7 @@ class Game {
     minigame2 = new ZombieDefense();
     minigame3 = new CrankGenerator();
     lives = livesArg;
+    shop = new Shop(this, 5, 5);
     setupDifficulty("medium");
     winSound = new SoundFile(parent, "Win.mp3");
     loseSound = new SoundFile(parent, "Lose.mp3");
@@ -229,24 +237,44 @@ class Game {
   
   // draws the shop when opened
   void drawShopOverlay() {
-    fill(30, 30, 30, 220);
+    fill(30, 30, 30, shopAlpha);
     rect(width / 2 - 200, height / 2 - 150, 400, 300, 20);
   
     fill(255);
     textAlign(CENTER);
     textSize(24);
     text("Shop", width / 2, height / 2 - 100);
-    image(healthPot, width/3, height/3, 100, 100);
-    image(healthUp, (width/3) +90, height/3.5, 150, 150);
-    image(healthPot, (width/3) + 220, height/3, 100, 100);
+  
+    // Draw item icons
+    imageMode(CENTER);
+    image(shop.speedBoostIcon, width/2 - 100, height/2 - 20, 80, 80);
+    image(shop.healthBoostIcon, width/2 + 100, height/2 - 20, 80, 80);
+  
+    // Draw item descriptions
     textSize(16);
-    text("Press 'B' to buy an health potion for " + shop.itemCost + " coins!", width / 2, height / 2+ 20);
-    text("You currently have " + coins + " coins.", width / 2, height / 2 + 60);
-    text("Press 'R' to exit", width / 2, height / 2 + 100);
+    text("Speed Boost - " + shop.itemCostSpeed + " coins", width/2 - 100, height/2 + 50);
+    text("Health Boost - " + shop.itemCostHealth + " coins", width/2 + 100, height/2 + 50);
+  
+    // Other info
+    text("You have " + coins + " coins.", width / 2, height/2 + 100);
+    text("Press 'B' to exit shop.", width / 2, height/2 + 130);
 }
+
 
   void display() {
     if (started) {
+      if (shopOpen) {
+        shopAlpha = min(shopAlpha + 10, 220);
+        drawShopOverlay();
+        return;
+      }
+      else {
+        if (shopAlpha > 0) {
+          shopAlpha = max(shopAlpha - 10, 0); // Fade out
+          drawShopOverlay();
+          return;
+        }
+      }
       // Update and check timer
       timeLeft = gameTimeTotal - (millis() - gameStartTime);
       
@@ -295,8 +323,6 @@ class Game {
         text("Press R to return to menu", width/2, height/2 + 50);
         return;
       }
-      // shop initialization; bool handled in main
-      shop = new Shop(this, 20);
       
       // White top bar overlay
       fill(255);
@@ -383,6 +409,9 @@ class Game {
         imageMode(CENTER);
         image(playerSprite, playerX, playerY, 200, 200);
 
+        for (Coin c : activeCoins) {
+          c.draw();
+        }
         
       } else if (roomID == 1) {
         minigame1.display();
@@ -602,6 +631,10 @@ class Game {
   boolean isDraggingSlider = false;
   
   void handleMousePressed() {
+    if (shopOpen) {
+      shop.checkPurchase(mouseX, mouseY);
+      return; // important! prevents other clicks from leaking into gameplay/minigames
+    }
     if (started) {
       // check roomID and do stuff based on what room user is in
       if (roomID == 1) {
@@ -691,7 +724,11 @@ class Game {
         resetGame();
         return;
       }
-      
+      if (game.shop != null) {
+        if (game.roomID == 0 && key == 'b' || key == 'B') {
+          game.shopOpen = !game.shopOpen;
+        }
+      }
       if (key == 'p' || key == 'P') { // Pause or settings
         started = false;
         gameState = 2; // Go to settings
@@ -765,6 +802,7 @@ class Game {
     started = false;
     gameState = 0;
     lives = 3;
+    playerSpeed = 2;
     roomID = 0;
     coins = 0;
     playerX = width/4;
@@ -783,6 +821,8 @@ class Game {
     // sfx reset
     endQuotePlayed = false;
     helpAlmostHerePlayed = false;
+    
+    activeCoins.clear();
   }
   
   void handleKeyReleased(char key, int keyCode) {
@@ -845,6 +885,21 @@ class Game {
     applyVolumeSettings();
     
     if (started && gameState == 1) {
+      // Coin spawning logic
+      if (roomID == 0 && millis() - lastCoinSpawnTime >= coinSpawnInterval) {
+        int spawnX = (int)random(100, width - 100);
+        int spawnY = (int)random(150, height - 100);
+        activeCoins.add(new Coin(spawnX, spawnY));
+        lastCoinSpawnTime = millis();
+      }
+      for (int i = activeCoins.size() - 1; i >= 0; i--) {
+        Coin c = activeCoins.get(i);
+        if (c.isCollected(playerX, playerY)) {
+          coins += 1;
+          activeCoins.remove(i);
+        }
+      }
+
       if (millis() - minigame1_lastTime >= minigame1_interval) {
         if (minigame1.tick() == -1) {
           lives--;
