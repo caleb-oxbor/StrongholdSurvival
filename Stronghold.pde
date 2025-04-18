@@ -492,6 +492,8 @@ class Game {
     rectMode(CORNER);
     int buttonY = height/2 - 65;
     
+    textAlign(CENTER, CENTER);
+    
     // Easy button (1 minute)
     if (isMouseOverRect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight)) {
       fill(100, 200, 100);
