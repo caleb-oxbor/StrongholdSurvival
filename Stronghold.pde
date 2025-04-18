@@ -74,6 +74,7 @@ class Game {
   
   // SFX
   PApplet parent;
+  SoundFile musicSound;
   SoundFile winSound;
   SoundFile loseSound;
   SoundFile helpAlmostHereSound;
@@ -121,6 +122,8 @@ class Game {
     shop = new Shop(this, 5, 5);
     setupDifficulty("medium");
     
+    musicSound = new SoundFile(parent, "bg_music.mp3");
+    musicSound.loop();
     winSound = new SoundFile(parent, "Win.mp3");
     loseSound = new SoundFile(parent, "Lose.mp3");
     hurtSound = new SoundFile[3];
@@ -143,6 +146,9 @@ class Game {
     lives = livesArg;
     shop = new Shop(this, 5, 5);
     setupDifficulty("medium");
+    
+    musicSound = new SoundFile(parent, "bg_music.mp3");
+    musicSound.loop();
     winSound = new SoundFile(parent, "Win.mp3");
     loseSound = new SoundFile(parent, "Lose.mp3");
     hurtSound = new SoundFile[3];
@@ -282,6 +288,7 @@ class Game {
         // You win! Game completed successfully
         if (!winSound.isPlaying() && !endQuotePlayed) {
           playQuote(winSound);
+          musicSound.stop();
           // winSound.play ();
           endQuotePlayed = true;
         }
@@ -307,6 +314,7 @@ class Game {
         if (!loseSound.isPlaying() && !endQuotePlayed) {
           playQuote(loseSound);
           // loseSound.play ();
+          musicSound.stop();
           endQuotePlayed = true;
         }
         
@@ -328,26 +336,6 @@ class Game {
       fill(255);
       rectMode(CORNER);
       rect(-5, -5, width + 5, 90);
-      
-      // Hearts
-      //imageMode(CORNER);
-      //int heartCorner = 0;
-      //for (int i = 0; i < lives; i++) {
-      //  image(heart, heartCorner, -30, 150, 150);
-      //  heartCorner += 85;
-      //}
-      
-      //// coins
-      //fill(200, 200, 0);
-      //rect(width/2 - 10, 30, 20, 20);
-      //textAlign(RIGHT, CENTER);
-      //textSize(40);
-      //text(coins, width/2 + 50, 40);
-      
-      //// Display timer
-      //fill(0);
-      //textAlign(RIGHT, CENTER);
-      //textSize(30);
       
       // Format time as MM:SS
       int secondsLeft = timeLeft / 1000;
@@ -449,11 +437,6 @@ class Game {
       textAlign(RIGHT, CENTER);
       textSize(30);
       
-      // Format time as MM:SS
-      //int secondsLeft = timeLeft / 1000;
-      //int minutes = secondsLeft / 60;
-      //int seconds = secondsLeft % 60;
-      
       //String timeString = nf(minutes, 2) + ":" + nf(seconds, 2);
       
       // Change color when time is running low (less than 30 seconds)
@@ -503,7 +486,7 @@ class Game {
     rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
     fill(255);
     textSize(24);
-    text("Easy (1 min)", width/2, buttonY + menuButtonHeight/2);
+    text("Easy (1 min)", width/2, buttonY + menuButtonHeight/2 + 12);
     
     // Medium button (3 minutes)
     buttonY += buttonSpacing;
@@ -514,7 +497,7 @@ class Game {
     }
     rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
     fill(255);
-    text("Medium (3 min)", width/2, buttonY + menuButtonHeight/2);
+    text("Medium (3 min)", width/2, buttonY + menuButtonHeight/2 + 12);
     
     // Hard button (5 minutes)
     buttonY += buttonSpacing;
@@ -525,7 +508,7 @@ class Game {
     }
     rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
     fill(255);
-    text("Hard (5 min)", width/2, buttonY + menuButtonHeight/2);
+    text("Hard (5 min)", width/2, buttonY + menuButtonHeight/2 + 12);
     
     // Settings button (circular in bottom right)
     float settingsX = width - settingsButtonSize - 20;
@@ -825,6 +808,7 @@ class Game {
     helpAlmostHerePlayed = false;
     
     activeCoins.clear();
+    musicSound.loop();
   }
   
   void handleKeyReleased(char key, int keyCode) {
@@ -874,7 +858,9 @@ class Game {
     loseSound.amp(soundVolume);
     helpAlmostHereSound.amp(soundVolume);
     gasLowSound.amp(soundVolume);
+    generatorLowSound.amp(soundVolume);
     zombieDoorstepSound.amp(soundVolume);
+    musicSound.amp(soundVolume);
     
     for (int i = 0; i < hurtSound.length; i++) {
       hurtSound[i].amp(soundVolume);
