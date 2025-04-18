@@ -81,6 +81,7 @@ class Game {
   SoundFile gasLowSound;
   SoundFile zombieDoorstepSound;
   SoundFile generatorLowSound;
+  SoundFile doorSound;
   boolean endQuotePlayed = false;
   boolean helpAlmostHerePlayed = false;
   
@@ -134,6 +135,7 @@ class Game {
     gasLowSound = new SoundFile(parent, "GasLow.mp3");
     zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
     generatorLowSound = new SoundFile(parent, "GeneratorLow.mp3");
+    doorSound = new SoundFile(parent, "door.mp3");
     quoteTimer = millis();
     quoteSpacing = 5000;
   }
@@ -159,6 +161,7 @@ class Game {
     gasLowSound = new SoundFile(parent, "GasLow.mp3");
     zombieDoorstepSound = new SoundFile(parent, "ZombieDoorstep.mp3");
     generatorLowSound = new SoundFile(parent, "GeneratorLow.mp3");
+    doorSound = new SoundFile(parent, "door.mp3");
     quoteTimer = millis();
     quoteSpacing = 5000;
   }
@@ -555,10 +558,11 @@ class Game {
     text("Controls", width/2, height/2);
     
     textSize(20);
-    textAlign(LEFT, CENTER);
-    text("Move: WASD or Arrow Keys", width/2 - 250, height/2 + 40);
-    text("Exit Minigame: SPACE", width/2 - 250, height/2 + 70);
-    text("Interact: MOUSE", width/2 - 250, height/2 + 100);
+    textAlign(CENTER, CENTER);
+    text("Move: WASD or Arrow Keys", width/2, height/2 + 40);
+    text("Enter Minigame or Shoot: E", width/2, height/2 + 70);
+    text("Exit Minigame: SPACE", width/2, height/2 + 100);
+    text("Pump Gas, Crank Generator, Buy Item: MOUSE", width/2, height/2 + 130);
     
     // Buttons at bottom - horizontal layout
     textAlign(CENTER, CENTER);
@@ -727,18 +731,21 @@ class Game {
             transitioning = true;
             transitionDest = 1;
             stopPlayer();
+            doorSound.play();
             }
           else if (playerX >= minigame2X && playerX + 20 <= minigame2X + 100 && playerY >= minigame2Y && playerY + 20 <= minigame2Y + 100) {
             stopPlayer();
             transitioning = true;
             transitionDest = 2;
             stopPlayer();
+            doorSound.play();
             }
           else if (playerX >= minigame3X && playerX + 20 <= minigame3X + 100 && playerY >= minigame3Y && playerY + 20 <= minigame3Y + 100) {
             stopPlayer();
             transitioning = true;
             transitionDest = 3;
             stopPlayer();
+            doorSound.play();
             }
         }
         
