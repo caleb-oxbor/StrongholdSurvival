@@ -486,7 +486,7 @@ class Game {
     rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
     fill(255);
     textSize(24);
-    text("Easy (1 min)", width/2, buttonY + menuButtonHeight/2 + 12);
+    text("Easy (1 min)", width/2, buttonY + menuButtonHeight/2);
     
     // Medium button (3 minutes)
     buttonY += buttonSpacing;
@@ -497,7 +497,7 @@ class Game {
     }
     rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
     fill(255);
-    text("Medium (3 min)", width/2, buttonY + menuButtonHeight/2 + 12);
+    text("Medium (3 min)", width/2, buttonY + menuButtonHeight/2);
     
     // Hard button (5 minutes)
     buttonY += buttonSpacing;
@@ -508,7 +508,7 @@ class Game {
     }
     rect(width/2 - menuButtonWidth/2, buttonY, menuButtonWidth, menuButtonHeight, 10);
     fill(255);
-    text("Hard (5 min)", width/2, buttonY + menuButtonHeight/2 + 12);
+    text("Hard (5 min)", width/2, buttonY + menuButtonHeight/2);
     
     // Settings button (circular in bottom right)
     float settingsX = width - settingsButtonSize - 20;
